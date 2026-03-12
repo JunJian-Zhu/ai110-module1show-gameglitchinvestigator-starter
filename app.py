@@ -42,11 +42,44 @@ if "status" not in st.session_state:
 if "history" not in st.session_state:
     st.session_state.history = []
 
+# FEATURE (Challenge 2): Guess History sidebar.
+# Claude Code Agent was prompted: "Add a sidebar section that shows each guess,
+# its outcome, and how far it was from the secret as a visual distance bar.
+# Store history as dicts so we can display structured data without touching
+# the core game logic functions."
+# The agent identified that history entries needed to become dicts and that
+# the display code belonged in the sidebar block, not the main submit handler.
+st.sidebar.divider()
+st.sidebar.subheader("Guess History")
+if st.session_state.history:
+    for i, entry in enumerate(st.session_state.history):
+        guess = entry["guess"]
+        outcome = entry["outcome"]
+        distance = entry["distance"]
+
+        if outcome == "Win":
+            icon = "🎉"
+            bar = ""
+        elif outcome == "Too High":
+            icon = "📉"
+            closeness = max(0, 10 - min(distance // 5, 10))
+            bar = "🔥" * closeness + "🧊" * (10 - closeness)
+        else:
+            icon = "📈"
+            closeness = max(0, 10 - min(distance // 5, 10))
+            bar = "🔥" * closeness + "🧊" * (10 - closeness)
+
+        st.sidebar.write(f"**#{i + 1}** — {guess} {icon} _{outcome}_")
+        if bar:
+            st.sidebar.caption(bar)
+else:
+    st.sidebar.caption("No guesses yet.")
+
 st.subheader("Make a guess")
 
 st.info(
-    f"Guess a number between 1 and 100. "
-    f"Attempts left: {attempt_limit - st.session_state.attempts}"
+    f"Guess a number between {low} and {high}. "
+    f"Attempts left: {attempt_limit - st.session_state.attempts + 1}"
 )
 
 with st.expander("Developer Debug Info"):
@@ -92,14 +125,19 @@ if submit:
     ok, guess_int, err = parse_guess(raw_guess)
 
     if not ok:
-        st.session_state.history.append(raw_guess)
+        st.session_state.history.append({"guess": raw_guess, "outcome": "Invalid", "distance": 0})
         st.error(err)
     else:
-        st.session_state.history.append(guess_int)
-
         # FIX: Original code cast secret to str on even attempts, causing lexicographic
         # comparison (e.g. "9" > "42" = True). Now always passes the integer secret.
         outcome, message = check_guess(guess_int, st.session_state.secret)
+
+        distance = abs(guess_int - st.session_state.secret)
+        st.session_state.history.append({
+            "guess": guess_int,
+            "outcome": outcome,
+            "distance": distance,
+        })
 
         if show_hint:
             st.warning(message)
