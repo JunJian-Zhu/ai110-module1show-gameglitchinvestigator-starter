@@ -40,13 +40,11 @@ It wrote the code, ran away, and now the game is unplayable.
 
 ## 📸 Demo
 
-<!-- TODO: Run `python -m streamlit run app.py`, play a full game until you win, then paste a screenshot here -->
-- [ ] [Insert a screenshot of your fixed, winning game here]
+![Demo - Winning Game](screenshots/demo_win.png)
 
 ## 🧪 Pytest Results
 
-<!-- TODO: Run `pytest` in your terminal and paste a screenshot of all tests passing here -->
-- [ ] [Insert a screenshot of pytest results showing all tests passing]
+![Pytest Results](screenshots/pytest_results.png)
 
 ## 🚀 Stretch Features
 
