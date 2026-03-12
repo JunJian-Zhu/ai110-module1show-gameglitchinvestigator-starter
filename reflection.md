@@ -4,7 +4,13 @@ Answer each question in 3 to 5 sentences. Be specific and honest about what actu
 
 ## 1. What was broken when you started?
 
-When I first ran the game, it appeared to work but the behavior was clearly wrong. The most obvious bug was that the hints were backwards: if I guessed too high, the game told me to go higher, and if I guessed too low, it told me to go lower. The second bug was subtler: on every even-numbered attempt, the secret number was silently converted to a string before being compared to my integer guess, which caused the comparison to use lexicographic ordering instead of numeric ordering, making the hints randomly incorrect. The "New Game" button also failed to fully reset the game. It left the old score, status, and history in place, and used a hardcoded range of 1–100 regardless of the selected difficulty.
+When I first ran the game, it appeared to work but the behavior was clearly wrong in three ways:
+
+**Bug 1 — Swapped hints (app.py, `check_guess`):** Expected: guessing 70 when the secret is 50 should say "Go LOWER!" because 70 is too high. Actual: the game said "Go HIGHER!", the opposite of correct. The same reversal happened in the other direction too.
+
+**Bug 2 — String-comparison on even attempts (app.py, submit handler):** Expected: on every attempt, my integer guess (e.g. 9) should be compared numerically to the secret (e.g. 42), so 9 < 42 → "Too Low". Actual: on even-numbered attempts, the secret was cast to a string, so `"9" > "42"` evaluated to True (lexicographic ordering), causing the game to incorrectly return "Too High" — the hints appeared random every other guess.
+
+**Bug 3 — Broken New Game reset (app.py, new game handler):** Expected: clicking "New Game" should restart with a fresh score of 0, attempt count of 1, empty history, and a secret in the correct difficulty range. Actual: score, status, and history carried over from the previous game, attempts reset to 0 (not 1), and the secret was always regenerated from 1–100 regardless of difficulty setting.
 
 ---
 
