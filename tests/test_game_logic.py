@@ -57,3 +57,44 @@ def test_get_range_easy():
 def test_get_range_normal():
     low, high = get_range_for_difficulty("Normal")
     assert low == 1 and high == 100
+
+# --- Edge Case Tests (Challenge 1) ---
+# These were identified via AI-assisted prompting:
+# "What inputs could break a number guessing game's parse function?"
+
+def test_parse_guess_negative_number():
+    # Edge case: negative numbers are valid integers and should parse successfully.
+    # The game logic (check_guess) will correctly treat -5 as lower than any secret.
+    ok, value, err = parse_guess("-5")
+    assert ok is True
+    assert value == -5
+    assert err is None
+
+def test_parse_guess_decimal_truncates():
+    # Edge case: a decimal like "7.9" should be accepted and truncated to 7,
+    # not rejected or rounded up. The player typed a near-integer, not garbage.
+    ok, value, err = parse_guess("7.9")
+    assert ok is True
+    assert value == 7
+    assert err is None
+
+def test_parse_guess_very_large_number():
+    # Edge case: an absurdly large number (e.g. 999999) should parse without
+    # crashing. check_guess will simply return "Too High" since it exceeds any secret.
+    ok, value, err = parse_guess("999999")
+    assert ok is True
+    assert value == 999999
+    assert err is None
+
+def test_check_guess_negative_guess_is_too_low():
+    # Edge case: a negative guess is always below any valid secret (min is 1),
+    # so the outcome must be "Too Low" — not a crash or unexpected result.
+    outcome, message = check_guess(-10, 50)
+    assert outcome == "Too Low"
+    assert "HIGHER" in message
+
+def test_parse_guess_whitespace_only():
+    # Edge case: a string of spaces should be treated as empty/invalid input.
+    ok, value, err = parse_guess("   ")
+    assert ok is False
+    assert value is None
