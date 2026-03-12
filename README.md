@@ -60,3 +60,13 @@ The agent was prompted: *"Add a sidebar section that shows each guess, its outco
 It identified that two areas of `app.py` needed to change together: (1) the submit handler had to store `{"guess", "outcome", "distance"}` dicts instead of bare integers, and (2) the sidebar rendering block had to read and display those dicts. Because all logic lives in `logic_utils.py` and was untouched, the feature was added cleanly without regressions.
 
 - [ ] [Insert a screenshot of the Guess History sidebar here]
+
+### Challenge 4: Enhanced Game UI
+
+Three UI enhancements were added to `app.py` without modifying `logic_utils.py`:
+
+1. **Color-coded hints** — after each guess the hint banner is green (win), yellow (within 10), or red (far away), so the player gets an instant visual signal.
+2. **Hot/Cold temperature label** — appended to every hint: 🔥 Burning Hot (≤3 away), 🌡️ Warm (≤10), ❄️ Cold (≤25), 🧊 Freezing (>25).
+3. **Session summary table** — when the game ends (win or loss) a full table is shown listing every attempt, the guess, outcome, distance, and temperature label.
+
+- [ ] [Insert a screenshot of the enhanced UI here]

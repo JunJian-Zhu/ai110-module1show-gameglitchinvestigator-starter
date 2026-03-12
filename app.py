@@ -42,13 +42,24 @@ if "status" not in st.session_state:
 if "history" not in st.session_state:
     st.session_state.history = []
 
+
+# FEATURE (Challenge 4): hot/cold temperature label based on distance.
+def _temperature_label(distance: int) -> str:
+    """Return an emoji temperature label based on how close the guess is."""
+    if distance <= 3:
+        return "🔥 Burning Hot!"
+    if distance <= 10:
+        return "🌡️ Warm"
+    if distance <= 25:
+        return "❄️ Cold"
+    return "🧊 Freezing!"
+
+
 # FEATURE (Challenge 2): Guess History sidebar.
 # Claude Code Agent was prompted: "Add a sidebar section that shows each guess,
 # its outcome, and how far it was from the secret as a visual distance bar.
 # Store history as dicts so we can display structured data without touching
 # the core game logic functions."
-# The agent identified that history entries needed to become dicts and that
-# the display code belonged in the sidebar block, not the main submit handler.
 st.sidebar.divider()
 st.sidebar.subheader("Guess History")
 if st.session_state.history:
@@ -112,11 +123,28 @@ if new_game:
     st.session_state.history = []
     st.rerun()
 
+# FEATURE (Challenge 4): show session summary table when game ends.
 if st.session_state.status != "playing":
     if st.session_state.status == "won":
         st.success("You already won. Start a new game to play again.")
     else:
         st.error("Game over. Start a new game to try again.")
+
+    valid_guesses = [
+        e for e in st.session_state.history if e["outcome"] != "Invalid"
+    ]
+    if valid_guesses:
+        st.subheader("Session Summary")
+        rows = []
+        for i, e in enumerate(valid_guesses):
+            rows.append({
+                "Attempt": i + 1,
+                "Guess": e["guess"],
+                "Outcome": e["outcome"],
+                "Distance": e["distance"],
+                "Temperature": _temperature_label(e["distance"]) if e["outcome"] != "Win" else "🎯 Exact!",
+            })
+        st.table(rows)
     st.stop()
 
 if submit:
@@ -139,8 +167,15 @@ if submit:
             "distance": distance,
         })
 
+        # FEATURE (Challenge 4): color-coded hints based on distance and outcome.
         if show_hint:
-            st.warning(message)
+            temp = _temperature_label(distance)
+            if outcome == "Win":
+                st.success(f"{message}")
+            elif distance <= 10:
+                st.warning(f"{message}  {temp}")
+            else:
+                st.error(f"{message}  {temp}")
 
         st.session_state.score = update_score(
             current_score=st.session_state.score,
