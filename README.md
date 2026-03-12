@@ -69,4 +69,4 @@ Three UI enhancements were added to `app.py` without modifying `logic_utils.py`:
 2. **Hot/Cold temperature label** — appended to every hint: 🔥 Burning Hot (≤3 away), 🌡️ Warm (≤10), ❄️ Cold (≤25), 🧊 Freezing (>25).
 3. **Session summary table** — when the game ends (win or loss) a full table is shown listing every attempt, the guess, outcome, distance, and temperature label.
 
-- [ ] [Insert a screenshot of the enhanced UI here]
+![Enhanced UI](screenshots/enhanced_ui.png)
