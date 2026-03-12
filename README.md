@@ -59,7 +59,7 @@ A **Guess History** panel was added to the sidebar. After each guess it shows:
 The agent was prompted: *"Add a sidebar section that shows each guess, its outcome, and how far it was from the secret as a visual distance bar. Store history as dicts so we can display structured data without touching the core game logic functions."*
 It identified that two areas of `app.py` needed to change together: (1) the submit handler had to store `{"guess", "outcome", "distance"}` dicts instead of bare integers, and (2) the sidebar rendering block had to read and display those dicts. Because all logic lives in `logic_utils.py` and was untouched, the feature was added cleanly without regressions.
 
-- [ ] [Insert a screenshot of the Guess History sidebar here]
+![Guess History Sidebar](screenshots/sidebar.png)
 
 ### Challenge 4: Enhanced Game UI
 
